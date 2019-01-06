@@ -1,0 +1,45 @@
+version: '3'
+services:
+
+  php:
+    build:
+      context: ./docker/php
+    image: laravel-docker-php:0.1
+    volumes:
+      - ./docker/php/app:/var/www/html
+    ports:
+      - 80:80
+    depends_on:
+      - mysql
+      - memcached
+    networks:
+      - docker_app_network
+
+  mysql:
+    build:
+      context: ./docker/mysql
+    image: laravel-docker-mysql:0.1
+    volumes:
+      - ./docker/mysql/data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=mysql
+      - MYSQL_PASSWORD=mysql
+      - MYSQL_DATABASE=test
+      - TZ=Asia/Tokyo
+    ports:
+      - 3306:3306
+    networks:
+      - docker_app_network
+
+  memcached:
+    build:
+      context: ./docker/memcached
+    image: laravel-docker-memcached:0.1
+    ports:
+      - 11211:11211
+    networks:
+      - docker_app_network
+
+networks:
+  docker_app_network:
